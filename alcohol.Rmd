@@ -37,7 +37,8 @@ alcohol <- alcohol[remove_NA,]
   summarize(beer = sum(beer_servings), spirit = sum(spirit_servings), wine = sum(wine_servings), total = beer + spirit + wine) %>%
   gather(key = "alcohol_type", value = "amount_consumed", 2:4) 
 
-  ggplot(Plot1, aes(x = reorder(continent, total), y = total, fill = continent)) + geom_col(show.legend = F) + coord_flip() + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3)) + theme_bw() + labs(x = "Continent", y = "Amount Consumed (in litres)", title = "Which Continent consumes Alcohol most?")
+ ggplot(Plot1, aes(x = reorder(continent, total), y = total, fill = continent)) + geom_col(show.legend = F) + coord_flip() + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3)) + theme_bw() + labs(x = "Continent", y = "Amount Consumed (in litres)", title = "Which Continent consumes Alcohol most?")
+ ggsave("Plot1.jpg", path = "visualizations")
 ```
 
 
@@ -49,7 +50,7 @@ Plot2 <- alcohol %>%
   gather(key = "alcohol", value = "amount_consumed", 2:4) 
   
   ggplot(Plot2, aes(x = alcohol, y = amount_consumed, fill = alcohol)) + geom_col(show.legend = F) + facet_wrap(~continent, scales = "free") + theme_bw() + labs(x = "Type of Alcohol Consumed", y = "Amount Consumed (in litres)", title = "Which type of Alcohol is preferred most by each continent?") + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3))
-  
+  ggsave("Plot2.jpg", path = "visualizations")
 ```
 
 
@@ -62,4 +63,5 @@ Plot2 <- alcohol %>%
 
 legend_title <- "Alcohol"
   ggplot(Plot3, aes(x = alcohol_type, y = amount_consumed,  fill = continent)) + geom_col(position = "dodge") + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3)) + theme_bw() + labs(x = "Alcohol", y = "Amount Consumed (in litres)", title = "Which continent consumes Beer, Spirit or Wine most?")
+  ggsave("Plot3.jpg", path = "visualizations")
 ```
