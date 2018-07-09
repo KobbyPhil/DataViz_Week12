@@ -1,2 +1,2 @@
-# DataViz_Week12
-Practicing Visualizations with tidy tuesday
+# DataViz_Week13
+### Practicing Visualizations with tidy tuesday using Alcohol Consumption Dataset from FiveThirtyEight
