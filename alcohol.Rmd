@@ -1,30 +1,65 @@
 ---
-title: "Untitled"
+title: "Tidy Tuesday Week_13"
+subtitle: "Alcohol Consumption on Continental basis"
 author: "Philemon Aidoo"
 date: "July 9, 2018"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+## Libraries
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(countrycode)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Read Data
+```{r}
+alcohol <- read.csv("data/week13_alcohol_global.csv")
+alcohol$continent <- factor(countrycode(sourcevar = alcohol$country, origin = 'country.name', destination = 'continent'))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Remove NA values from Continent Variable
+```{r}
+remove_NA <- !is.na(alcohol$continent)
+alcohol <- alcohol[remove_NA,]
+```
+
+## Plot 1
+```{r}
+  Plot1 <- alcohol %>%
+  group_by(continent) %>%
+  summarize(beer = sum(beer_servings), spirit = sum(spirit_servings), wine = sum(wine_servings), total = beer + spirit + wine) %>%
+  gather(key = "alcohol_type", value = "amount_consumed", 2:4) 
+
+  ggplot(Plot1, aes(x = reorder(continent, total), y = total, fill = continent)) + geom_col(show.legend = F) + coord_flip() + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3)) + theme_bw() + labs(x = "Continent", y = "Amount Consumed (in litres)", title = "Which Continent consumes Alcohol most?")
+```
+
+
+## Plot 2
+```{r}
+Plot2 <- alcohol %>%
+  group_by(continent) %>%
+  summarize(beer = sum(beer_servings), spirit = sum(spirit_servings), wine = sum(wine_servings)) %>%
+  gather(key = "alcohol", value = "amount_consumed", 2:4) 
+  
+  ggplot(Plot2, aes(x = alcohol, y = amount_consumed, fill = alcohol)) + geom_col(show.legend = F) + facet_wrap(~continent, scales = "free") + theme_bw() + labs(x = "Type of Alcohol Consumed", y = "Amount Consumed (in litres)", title = "Which type of Alcohol is preferred most by each continent?") + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3))
+  
+```
+
+
+## Plot 3
+```{r}
+  Plot3 <- alcohol %>%
+  group_by(continent) %>%
+  summarize(beer = sum(beer_servings), spirit = sum(spirit_servings), wine = sum(wine_servings)) %>%
+  gather(key = "alcohol_type", value = "amount_consumed", 2:4) 
+
+legend_title <- "Alcohol"
+  ggplot(Plot3, aes(x = alcohol_type, y = amount_consumed,  fill = continent)) + geom_col(position = "dodge") + theme(axis.title.y = element_text(margin = margin(r = 13)), axis.title.x = element_text(margin = margin(t = 10)), axis.title = element_text(size = 12), plot.title = element_text(size = 15, vjust = 3)) + theme_bw() + labs(x = "Alcohol", y = "Amount Consumed (in litres)", title = "Which continent consumes Beer, Spirit or Wine most?")
+```
